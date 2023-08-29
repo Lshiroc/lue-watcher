@@ -1,0 +1,27 @@
+const allButtons = document.body.querySelectorAll('button');
+
+allButtons.forEach((button) => {
+  button.addEventListener('click', (e) => {
+    console.log('Clicked to the button!', e.target.innerText);
+  })
+})
+
+let userAgent = navigator.userAgent;
+let browser;
+if(window.navigator?.brave != null || window.navigator?.brave?.isBrave?.name == 'isBrave') {
+  browser = "Brave";
+} else if(userAgent.match(/firefox|fxios/i)) {
+  browser = "FireFox";
+} else if(userAgent.match(/opr\//i)) {
+  browser = "Opera";
+} else if(userAgent.match(/edg/i)) {
+  browser = "Edge";
+} else if(userAgent.match(/chrome|chromium|crios/i)) {
+  browser = "Chrome";
+} else if(userAgent.match(/safari/i)) {
+  browser = "Safari";
+} else {
+  browser = "Couldn't detect";
+}
+
+console.log(browser);
