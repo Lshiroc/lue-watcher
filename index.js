@@ -16,7 +16,4 @@ app.use(cors({
 const testRouter = require('./routes/test');
 app.use('/test', testRouter);
 
-const registerRouter = require('./routes/register');
-app.use('/register', registerRouter);
-
 app.listen(PORT, () => console.log("Server is up on localhost:8000"));
