@@ -1,4 +1,4 @@
-const allButtons = document.body.querySelectorAll('button');
+/*const allButtons = document.body.querySelectorAll('button');
 
 allButtons.forEach((button) => {
   button.addEventListener('click', (e) => {
@@ -24,4 +24,30 @@ if(window.navigator?.brave != null || window.navigator?.brave?.isBrave?.name == 
   browser = "Couldn't detect";
 }
 
-console.log(browser);
+console.log(browser);*/
+
+// other tests
+
+const winWidth = window.innerWidth;
+const winHeight = window.innerHeight;
+console.log(winWidth, winHeight);
+
+console.log(winWidth/12);
+console.log(winHeight/12);
+
+let arr = [];
+
+document.addEventListener("mouseover", (e) => {
+  console.log("okkkk", e.clientX, e.clientY);
+  arr.push({
+    x: Math.floor((e.clientX/winWidth)*100),
+    y: Math.floor((e.clientY/winHeight)*100),
+  });
+})
+
+const printData = () => {
+  let str = "const data = [";
+  for(let i = 0; i < arr.length; i++) {
+    str += JSON.stringiyarr[i];
+  }
+}

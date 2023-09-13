@@ -4,7 +4,7 @@ const fs = require('fs')
 
 router.get('/', (req, res) => {
   try {
-    const script = fs.readFileSync('script.txt', 'utf-8');
+    const script = fs.readFileSync(`${__dirname}\\script.txt`, 'utf-8');
 
     res.header('Content-Type', 'text/javascript');
     res.status(200).send(script);
