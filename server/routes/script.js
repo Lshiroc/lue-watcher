@@ -63,7 +63,12 @@ document.addEventListener("mouseover", (e) => {
     width: elementData.width,
     height: elementData.height,
     left: elementData.left,
-    top: elementData.top
+    top: elementData.top,
+    mouseX: (e.clientX/winWidth)*100,
+    mouseY: (e.clientY/winHeight)*100,
+    winWidth,
+    winHeight,
+    isLocationCentered: elementData.width < 200 || elementData.height < 200
   };
 
   
@@ -77,11 +82,4 @@ function xpath(el) {
   if (el.id) return "//*[@id='" + el.id + "']"
   var sames = [].filter.call(el.parentNode.children, function (x) { return x.tagName == el.tagName })
   return xpath(el.parentNode) + '/' + el.tagName.toLowerCase() + (sames.length > 1 ? '['+([].indexOf.call(sames, el)+1)+']' : '')
-}
-
-const printData = () => {
-  let str = "const data = [";
-  for(let i = 0; i < arr.length; i++) {
-    str += JSON.stringiyarr[i];
-  }
 }
