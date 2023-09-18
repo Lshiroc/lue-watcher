@@ -7,7 +7,16 @@ type Pattern = {
     mouseY: number,
     winWidth: number,
     winHeight: number,
-    isLocationCentered: boolean
+    isLocationCentered: boolean,
+    scroll: number
+}
+
+type Scroll = {
+    scroll: number,
+    scrollBegin: number,
+    scrollEnd: number,
+    x: number,
+    y: number
 }
 
 export class Canvas {
@@ -18,6 +27,7 @@ export class Canvas {
     lineWidth: number = 5;
     lineCap: CanvasLineCap = "round";
     strokeStyle: string = "rgb(41, 255, 80)";
+    scrollPoints: Scroll[] = [];
     
     // second line under the main one
     layerLineWidth: number = 14;
@@ -36,8 +46,22 @@ export class Canvas {
         }
         canvas.width = this.width;
         canvas.height = this.height;
-
         this.ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
+        canvas.addEventListener('click', (e) => {
+            const mousePoint = {
+                x: e.clientX,
+                y: e.clientY
+            }
+
+            this.scrollPoints.forEach((scrollPoint) => {
+                if (this.isIntersect(mousePoint, {x: scrollPoint.x, y: scrollPoint.y, radius: 20})) {
+                    let iframe = document.querySelector("#iframe") as HTMLIFrameElement;
+                    let iframeContentWindow = iframe.contentWindow as Window;
+                    iframeContentWindow.document.documentElement.style.scrollBehavior = "smooth";
+                    iframeContentWindow.scrollTo(0, scrollPoint.scrollEnd);
+                }
+            })
+        })
     }
 
     info() {
@@ -102,5 +126,25 @@ export class Canvas {
         })
 
         ctx.stroke();
+    }
+
+    drawAllScrolls(scrollPoints: Scroll[]) {
+        this.scrollPoints = scrollPoints;
+        scrollPoints.forEach(scrollPoint => {
+            this.drawScroll(scrollPoint.x, scrollPoint.y, scrollPoint.scrollEnd, scrollPoint.scrollBegin);
+        })
+    }
+
+    drawScroll(x: number, y: number, scrollEndX: number, scroll: number) {
+        const ctx = this.ctx;
+        ctx.beginPath();
+        ctx.strokeStyle = "black";
+        ctx.lineWidth = 2;
+        ctx.arc(x, y, 20, 0, 2 * Math.PI);
+        ctx.stroke();
+    }
+
+    isIntersect(point: {x: number, y: number}, circle: {x: number, y: number, radius: number}) {
+        return Math.sqrt((point.x-circle.x) ** 2 + (point.y - circle.y) ** 2) < circle.radius;
     }
 }

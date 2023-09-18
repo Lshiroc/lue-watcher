@@ -4,6 +4,7 @@ export class Canvas {
         this.lineWidth = 5;
         this.lineCap = "round";
         this.strokeStyle = "rgb(41, 255, 80)";
+        this.scrollPoints = [];
         // second line under the main one
         this.layerLineWidth = 14;
         this.layerLineCap = "round";
@@ -20,6 +21,20 @@ export class Canvas {
         canvas.width = this.width;
         canvas.height = this.height;
         this.ctx = canvas.getContext("2d");
+        canvas.addEventListener('click', (e) => {
+            const mousePoint = {
+                x: e.clientX,
+                y: e.clientY
+            };
+            this.scrollPoints.forEach((scrollPoint) => {
+                if (this.isIntersect(mousePoint, { x: scrollPoint.x, y: scrollPoint.y, radius: 20 })) {
+                    let iframe = document.querySelector("#iframe");
+                    let iframeContentWindow = iframe.contentWindow;
+                    iframeContentWindow.document.documentElement.style.scrollBehavior = "smooth";
+                    iframeContentWindow.scrollTo(0, scrollPoint.scrollEnd);
+                }
+            });
+        });
     }
     info() {
         return {
@@ -76,5 +91,22 @@ export class Canvas {
             }
         });
         ctx.stroke();
+    }
+    drawAllScrolls(scrollPoints) {
+        this.scrollPoints = scrollPoints;
+        scrollPoints.forEach(scrollPoint => {
+            this.drawScroll(scrollPoint.x, scrollPoint.y, scrollPoint.scrollEnd, scrollPoint.scrollBegin);
+        });
+    }
+    drawScroll(x, y, scrollEndX, scroll) {
+        const ctx = this.ctx;
+        ctx.beginPath();
+        ctx.strokeStyle = "black";
+        ctx.lineWidth = 2;
+        ctx.arc(x, y, 20, 0, 2 * Math.PI);
+        ctx.stroke();
+    }
+    isIntersect(point, circle) {
+        return Math.sqrt(Math.pow((point.x - circle.x), 2) + Math.pow((point.y - circle.y), 2)) < circle.radius;
     }
 }

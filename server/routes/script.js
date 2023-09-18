@@ -1,8 +1,22 @@
 const winWidth = window.innerWidth;
 const winHeight = window.innerHeight;
+let isScrolling = false;
 let arr = [];
+let scrollPoints = [];
 document.addEventListener('mouseover', (e) => {
     var _a, _b;
+    let currentScroll = window.pageYOffset || (document.documentElement || document.body.parentNode || document.body).scrollTop;
+    if ((isScrolling && scrollPoints[scrollPoints.length - 1].scrollBegin != currentScroll) || scrollPoints.length == 0) {
+        let newScrollPoint = {
+            scroll: -1,
+            scrollBegin: currentScroll,
+            scrollEnd: -1,
+            x: e.clientX,
+            y: e.clientY
+        };
+        scrollPoints.push(newScrollPoint);
+    }
+    ;
     const elTarget = e.target;
     const xp = xpath(elTarget);
     if (arr.length > 0) {
@@ -26,7 +40,8 @@ document.addEventListener('mouseover', (e) => {
         mouseY: (e.clientY / winHeight) * 100,
         winWidth,
         winHeight,
-        isLocationCentered: elementData.width < 200 || elementData.height < 200
+        isLocationCentered: elementData.width < 200 || elementData.height < 200,
+        scroll: currentScroll
     };
     arr.push(newData);
     console.log("added", arr);
@@ -49,5 +64,23 @@ function xpath(el) {
 function info() {
     console.log(JSON.stringify(arr));
 }
+function showScrollPoints() {
+    console.log(JSON.stringify(scrollPoints));
+}
 window.info = info;
+window.showScrollPoints = showScrollPoints;
+// Watching for scroll
+document.addEventListener('scroll', (e) => {
+    isScrolling = true;
+    console.log("scrolling");
+});
+document.addEventListener('scrollend', (e) => {
+    isScrolling = false;
+    // if scrollEnd is not noted
+    let lastScrollPoint = scrollPoints[scrollPoints.length - 1];
+    if (lastScrollPoint.scrollEnd == -1 && scrollPoints.length > 0) {
+        scrollPoints[scrollPoints.length - 1].scrollEnd = window.pageYOffset || (document.documentElement || document.body.parentNode || document.body).scrollTop;
+        console.log("scroll point end saved");
+    }
+});
 export {};
