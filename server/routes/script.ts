@@ -9,7 +9,8 @@ type Pattern =  {
     winWidth: number,
     winHeight: number,
     isLocationCentered: boolean,
-    scroll: number
+    scroll: number,
+    hasScrolled: boolean,
 }
 
 type Scroll = {
@@ -37,6 +38,9 @@ document.addEventListener('mouseover', (e: MouseEvent): boolean|void => {
             y: e.clientY
         }
         scrollPoints.push(newScrollPoint);
+        if(arr.length > 0) {
+            arr[arr.length-1].hasScrolled = true;
+        }
     };
     const elTarget = e.target as HTMLElement;
     const xp = xpath(elTarget);
@@ -64,7 +68,8 @@ document.addEventListener('mouseover', (e: MouseEvent): boolean|void => {
         winWidth,
         winHeight,
         isLocationCentered: elementData.width < 200 || elementData.height < 200,
-        scroll: currentScroll
+        scroll: currentScroll,
+        hasScrolled: false
     }
 
     arr.push(newData);
@@ -112,7 +117,7 @@ document.addEventListener('scrollend', (e) => {
     
     // if scrollEnd is not noted
     let lastScrollPoint = scrollPoints[scrollPoints.length - 1];
-    if(lastScrollPoint.scrollEnd == -1 && scrollPoints.length > 0) {
+    if(lastScrollPoint?.scrollEnd == -1 && scrollPoints.length > 0) {
         scrollPoints[scrollPoints.length - 1].scrollEnd = window.pageYOffset || (document.documentElement || document.body.parentNode || document.body).scrollTop;
         console.log("scroll point end saved");
     }

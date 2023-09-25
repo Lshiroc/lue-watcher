@@ -15,6 +15,9 @@ document.addEventListener('mouseover', (e) => {
             y: e.clientY
         };
         scrollPoints.push(newScrollPoint);
+        if (arr.length > 0) {
+            arr[arr.length - 1].hasScrolled = true;
+        }
     }
     ;
     const elTarget = e.target;
@@ -41,7 +44,8 @@ document.addEventListener('mouseover', (e) => {
         winWidth,
         winHeight,
         isLocationCentered: elementData.width < 200 || elementData.height < 200,
-        scroll: currentScroll
+        scroll: currentScroll,
+        hasScrolled: false
     };
     arr.push(newData);
     console.log("added", arr);
@@ -78,7 +82,7 @@ document.addEventListener('scrollend', (e) => {
     isScrolling = false;
     // if scrollEnd is not noted
     let lastScrollPoint = scrollPoints[scrollPoints.length - 1];
-    if (lastScrollPoint.scrollEnd == -1 && scrollPoints.length > 0) {
+    if ((lastScrollPoint === null || lastScrollPoint === void 0 ? void 0 : lastScrollPoint.scrollEnd) == -1 && scrollPoints.length > 0) {
         scrollPoints[scrollPoints.length - 1].scrollEnd = window.pageYOffset || (document.documentElement || document.body.parentNode || document.body).scrollTop;
         console.log("scroll point end saved");
     }

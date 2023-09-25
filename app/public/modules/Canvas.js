@@ -1,6 +1,8 @@
 export class Canvas {
     constructor(canvasClassifier, isFullScreen, width = 400, height = 400) {
         this.data = [];
+        this.dataSeparated = [];
+        this.currentDataSet = [];
         this.lineWidth = 5;
         this.lineCap = "round";
         this.strokeStyle = "rgb(41, 255, 80)";
@@ -32,6 +34,10 @@ export class Canvas {
                     let iframeContentWindow = iframe.contentWindow;
                     iframeContentWindow.document.documentElement.style.scrollBehavior = "smooth";
                     iframeContentWindow.scrollTo(0, scrollPoint.scrollEnd);
+                    this.ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    this.currentDataSet = this.dataSeparated[4];
+                    this.style(this.lineWidth, this.lineCap, this.strokeStyle, this.layerLineWidth, this.layerLineCap, this.layerStrokeStyle);
+                    this.draw();
                 }
             });
         });
@@ -43,7 +49,10 @@ export class Canvas {
             defaultLineWidth: this.lineWidth,
             defaultLineCap: this.lineCap,
             defaultStrokeStyles: this.strokeStyle,
-            currentData: this.data
+            currentData: this.data,
+            scrollPoints: this.scrollPoints,
+            currentDataSet: this.currentDataSet,
+            dataSeparated: this.dataSeparated
         };
     }
     style(lineWidth, lineCap, strokeStyle, layerLineWidth, layerLineCap, layerStrokeStyle) {
@@ -54,8 +63,11 @@ export class Canvas {
         this.layerLineCap = layerLineCap;
         this.layerStrokeStyle = layerStrokeStyle;
     }
-    draw(dataPattern) {
-        this.data = dataPattern;
+    addData(data) {
+        this.data = data;
+        this.organizeScrollPoints(data);
+    }
+    draw() {
         // Drawing main line
         this.drawLine(this.lineWidth, this.lineCap, this.strokeStyle);
         // Drawing the secondary line
@@ -67,7 +79,7 @@ export class Canvas {
         if (newData == null) {
             if (this.data.length == 0)
                 return false;
-            data = this.data;
+            data = this.currentDataSet;
         }
         else {
             data = newData;
@@ -77,29 +89,51 @@ export class Canvas {
         ctx.lineCap = lineCap;
         ctx.strokeStyle = strokeStyle;
         ctx.beginPath();
+        let currentScroll = 0;
+        let newScrollPoint = { scrollEnd: 0, x: 0, y: 0 };
         let startPointX = data[0].width / 2 + data[0].left;
         let startPointY = data[0].height / 2 + data[0].top;
         ctx.moveTo(startPointX, startPointY);
         data.forEach((element) => {
+            let pointX;
+            let pointY;
             if (element.width > 200 || element.height > 200) {
-                ctx.lineTo((element.mouseX * this.width) / 100, (element.mouseY * this.height / 100));
+                // Using percantage
+                pointX = (element.mouseX * this.width) / 100;
+                pointY = (element.mouseY * this.height) / 100;
+                ctx.lineTo(pointX, pointY);
             }
             else {
-                let pointX = element.width / 2 + element.left;
-                let pointY = element.height / 2 + element.top;
+                // Drawing to the center of the element
+                pointX = element.width / 2 + element.left;
+                pointY = element.height / 2 + element.top;
                 ctx.lineTo(pointX, pointY);
+            }
+            if (currentScroll != element.scroll) {
+                // Adding scrollPoint to respective array
+                newScrollPoint.scrollEnd = element.scroll;
+                this.scrollPoints = [...this.scrollPoints, newScrollPoint];
+            }
+            if (element.hasScrolled) {
+                newScrollPoint = {
+                    scrollEnd: 0,
+                    x: pointX,
+                    y: pointY
+                };
+                console.log(element.mouseX, element.mouseY);
+                // Drawing scroll and restyling the ctx 
+                this.drawScroll(pointX, pointY, element.scroll);
+                ctx.lineWidth = lineWidth;
+                ctx.lineCap = lineCap;
+                ctx.strokeStyle = strokeStyle;
+                ctx.beginPath();
             }
         });
         ctx.stroke();
     }
-    drawAllScrolls(scrollPoints) {
-        this.scrollPoints = scrollPoints;
-        scrollPoints.forEach(scrollPoint => {
-            this.drawScroll(scrollPoint.x, scrollPoint.y, scrollPoint.scrollEnd, scrollPoint.scrollBegin);
-        });
-    }
-    drawScroll(x, y, scrollEndX, scroll) {
+    drawScroll(x, y, scrollEndX) {
         const ctx = this.ctx;
+        ctx.stroke();
         ctx.beginPath();
         ctx.strokeStyle = "black";
         ctx.lineWidth = 2;
@@ -108,5 +142,19 @@ export class Canvas {
     }
     isIntersect(point, circle) {
         return Math.sqrt(Math.pow((point.x - circle.x), 2) + Math.pow((point.y - circle.y), 2)) < circle.radius;
+    }
+    organizeScrollPoints(data) {
+        let isPreviousScrolled = false;
+        let scrollArr = [];
+        data.forEach(element => {
+            scrollArr.push(element);
+            if (isPreviousScrolled) {
+                this.dataSeparated = [...this.dataSeparated, scrollArr];
+                scrollArr = [];
+            }
+            isPreviousScrolled = element.hasScrolled;
+        });
+        this.dataSeparated = [...this.dataSeparated, scrollArr];
+        this.currentDataSet = this.dataSeparated[0];
     }
 }

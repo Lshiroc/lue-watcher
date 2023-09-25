@@ -7,7 +7,8 @@ router.get('/', (req, res) => {
     try {
         const __filename = fileURLToPath(import.meta.url);
         const __dirname = path.dirname(__filename);
-        const script = fs.readFileSync(`https://lue-watcher.vercel.app${__dirname}/script.js`, 'utf-8');
+        const script = fs.readFileSync(`${__dirname}/script.js`, 'utf-8');
+        // const script = fs.readFileSync(`https://lue-watcher.vercel.app${__dirname}/script.js`, 'utf-8');
         res.header('Content-Type', 'text/javascript');
         res.status(200).send(script);
     }
