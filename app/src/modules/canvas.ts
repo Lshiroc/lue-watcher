@@ -48,23 +48,26 @@ export class Canvas {
         canvas.width = this.width;
         canvas.height = this.height;
         this.ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
+        let count: number = 0;
         canvas.addEventListener('click', (e) => {
             
             const mousePoint = {
                 x: e.clientX,
                 y: e.clientY
             }
-
+            
+            console.log("scroll ppints", this.scrollPoints);
             this.scrollPoints.forEach((scrollPoint) => {
                 if (this.isIntersect(mousePoint, {x: scrollPoint.x, y: scrollPoint.y, radius: 20})) {
                     let iframe = document.querySelector("#iframe") as HTMLIFrameElement;
                     let iframeContentWindow = iframe.contentWindow as Window;
                     iframeContentWindow.document.documentElement.style.scrollBehavior = "smooth";
                     iframeContentWindow.scrollTo(0, scrollPoint.scrollEnd);
+                    console.log("clicked and ", count)
 
 
                     this.ctx.clearRect(0, 0, canvas.width, canvas.height);
-                    this.currentDataSet = this.dataSeparated[4];
+                    this.currentDataSet = this.dataSeparated[count++];
                     this.style(this.lineWidth, this.lineCap, this.strokeStyle, this.layerLineWidth, this.layerLineCap, this.layerStrokeStyle);
                     this.draw();
                 }
@@ -127,6 +130,7 @@ export class Canvas {
 
         let currentScroll: number = 0;
         let newScrollPoint: Scroll = {scrollEnd: 0, x: 0, y: 0};
+        console.log("reading....", data);
         let startPointX: number = data[0].width/2 + data[0].left;
         let startPointY: number = data[0].height/2 + data[0].top;
         ctx.moveTo(startPointX, startPointY);
@@ -149,8 +153,7 @@ export class Canvas {
                 // Adding scrollPoint to respective array
                 newScrollPoint.scrollEnd = element.scroll;
                 this.scrollPoints = [...this.scrollPoints, newScrollPoint];
-            }
-            if(element.hasScrolled) {
+
                 newScrollPoint = {
                     scrollEnd: 0,
                     x: pointX,
@@ -165,6 +168,21 @@ export class Canvas {
                 ctx.strokeStyle = strokeStyle;
                 ctx.beginPath();
             }
+            // if(element.hasScrolled) {
+            //     newScrollPoint = {
+            //         scrollEnd: 0,
+            //         x: pointX,
+            //         y: pointY
+            //     }
+            //     console.log(element.mouseX, element.mouseY);
+
+            //     // Drawing scroll and restyling the ctx 
+            //     this.drawScroll(pointX, pointY, element.scroll);
+            //     ctx.lineWidth = lineWidth;
+            //     ctx.lineCap = lineCap;
+            //     ctx.strokeStyle = strokeStyle;
+            //     ctx.beginPath();
+            // }
         })
 
         ctx.stroke();
@@ -186,16 +204,23 @@ export class Canvas {
 
     organizeScrollPoints(data: Pattern[]) {
         let isPreviousScrolled = false;
+        let previousScroll: number = 0;
         let scrollArr: Pattern[] = [];
         data.forEach(element => {
             scrollArr.push(element);
-            if(isPreviousScrolled) {
+            // if(isPreviousScrolled) {
+            //     this.dataSeparated = [...this.dataSeparated, scrollArr];
+            //     scrollArr = [];
+            // }
+            if(previousScroll != element.scroll) {
                 this.dataSeparated = [...this.dataSeparated, scrollArr];
                 scrollArr = [];
             }
-            isPreviousScrolled = element.hasScrolled;
+            previousScroll = element.scroll;
+            // isPreviousScrolled = element.hasScrolled;
         })
         this.dataSeparated = [...this.dataSeparated, scrollArr];
         this.currentDataSet = this.dataSeparated[0];
+        console.log("current data set = ", this.dataSeparated);
     }
 }

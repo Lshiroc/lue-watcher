@@ -3,23 +3,22 @@ const winHeight = window.innerHeight;
 let isScrolling = false;
 let arr = [];
 let scrollPoints = [];
-document.addEventListener('mouseover', (e) => {
+document.addEventListener('mousemove', (e) => {
     var _a, _b;
     let currentScroll = window.pageYOffset || (document.documentElement || document.body.parentNode || document.body).scrollTop;
-    if ((isScrolling && scrollPoints[scrollPoints.length - 1].scrollBegin != currentScroll) || scrollPoints.length == 0) {
-        let newScrollPoint = {
-            scroll: -1,
-            scrollBegin: currentScroll,
-            scrollEnd: -1,
-            x: e.clientX,
-            y: e.clientY
-        };
-        scrollPoints.push(newScrollPoint);
-        if (arr.length > 0) {
-            arr[arr.length - 1].hasScrolled = true;
-        }
-    }
-    ;
+    // if((isScrolling && scrollPoints[scrollPoints.length - 1].scrollBegin != currentScroll) || scrollPoints.length == 0) {
+    //     let newScrollPoint = {
+    //         scroll: -1,
+    //         scrollBegin: currentScroll,
+    //         scrollEnd: -1,
+    //         x: e.clientX,
+    //         y: e.clientY
+    //     }
+    //     scrollPoints.push(newScrollPoint);
+    //     if(arr.length > 0) {
+    //         arr[arr.length-1].hasScrolled = true;
+    //     }
+    // };
     const elTarget = e.target;
     const xp = xpath(elTarget);
     if (arr.length > 0) {
@@ -66,6 +65,8 @@ function xpath(el) {
     return xpath(el.parentElement) + '/' + el.tagName.toLowerCase() + (sames.length > 1 ? '[' + ([].indexOf.call(sames, el) + 1) + ']' : '');
 }
 function info() {
+    alert("copied to clipboard");
+    navigator.clipboard.writeText(JSON.stringify(arr));
     console.log(JSON.stringify(arr));
 }
 function showScrollPoints() {

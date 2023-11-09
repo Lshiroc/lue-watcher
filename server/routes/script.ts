@@ -27,21 +27,21 @@ let isScrolling = false;
 let arr: Pattern[] = [];
 let scrollPoints: Scroll[] = [];
 
-document.addEventListener('mouseover', (e: MouseEvent): boolean|void => {
+document.addEventListener('mousemove', (e: MouseEvent): boolean|void => { // originally was "mouseover"
     let currentScroll = window.pageYOffset || (document.documentElement || document.body.parentNode || document.body).scrollTop;
-    if((isScrolling && scrollPoints[scrollPoints.length - 1].scrollBegin != currentScroll) || scrollPoints.length == 0) {
-        let newScrollPoint = {
-            scroll: -1,
-            scrollBegin: currentScroll,
-            scrollEnd: -1,
-            x: e.clientX,
-            y: e.clientY
-        }
-        scrollPoints.push(newScrollPoint);
-        if(arr.length > 0) {
-            arr[arr.length-1].hasScrolled = true;
-        }
-    };
+    // if((isScrolling && scrollPoints[scrollPoints.length - 1].scrollBegin != currentScroll) || scrollPoints.length == 0) {
+    //     let newScrollPoint = {
+    //         scroll: -1,
+    //         scrollBegin: currentScroll,
+    //         scrollEnd: -1,
+    //         x: e.clientX,
+    //         y: e.clientY
+    //     }
+    //     scrollPoints.push(newScrollPoint);
+    //     if(arr.length > 0) {
+    //         arr[arr.length-1].hasScrolled = true;
+    //     }
+    // };
     const elTarget = e.target as HTMLElement;
     const xp = xpath(elTarget);
 
@@ -96,6 +96,8 @@ function xpath(el: HTMLElement|null): (string|XPathResult) {
 }
 
 function info() {
+    alert("copied to clipboard");
+    navigator.clipboard.writeText(JSON.stringify(arr));
     console.log(JSON.stringify(arr));
 }
 
