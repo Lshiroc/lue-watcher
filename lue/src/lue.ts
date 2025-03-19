@@ -1,7 +1,7 @@
 import { UserTrack } from "./types";
 import Track from "./track";
 
-class LUE {
+export class LUE {
     width: number;
     height: number;
     tracks: UserTrack[] = [];
@@ -59,8 +59,8 @@ class LUE {
         });
     }
 
-    connect() {
-        const socket = new WebSocket("ws://localhost:8000/ws/test/");
+    connect(socketURL: string) {
+        const socket = new WebSocket(socketURL);
 
         socket.addEventListener("open", (e) => {
             console.log("Connection successfull");
@@ -77,5 +77,3 @@ class LUE {
         return this.tracks;
     }
 }
-
-export default LUE;
