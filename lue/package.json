@@ -1,0 +1,22 @@
+{
+  "name": "lue-watcher",
+  "version": "0.0.1",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "homepage": "https://github.com/Lshiroc/lue-watcher",
+  "repository": {
+    "url": "https://github.com/Lshiroc/lue-watcher"
+  },
+  "scripts": {
+    "build": "tsup"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "description": "npm package for lue-watcher",
+  "devDependencies": {
+    "tsup": "^8.4.0",
+    "typescript": "^5.8.2"
+  }
+}
