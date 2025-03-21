@@ -1,33 +1,19 @@
 import { UserTrack } from "./types";
 import Track from "./track";
 
-class LUE {
+export default class LUE {
     width: number;
     height: number;
     tracks: UserTrack[] = [];
     connection?: WebSocket;
+    isConnected: boolean = false;
+    sessionId?: string;
+    autoSaveInterval: number = 2000;
+    intervalId?: number;
 
     constructor() {
         this.width = window.innerWidth;
         this.height = window.innerWidth;
-    }
-
-    simulate() {
-        const el = document.createElement("div");
-        el.classList.add("customcc");
-        el.style = "width: 30px; height: 30px; background-color: violet; position: absolute; top: 0; transition: 1s;";
-        document.body.appendChild(el);
-
-        // const elTemp: HTMLDivElement = document.querySelector('.customcc');
-        // console.log("Started", mouseMovements);
-        // let i = 0;
-        // const interval = setInterval(() => {
-        //     console.log("set")
-        //     elTemp.style.left = `${mouseMovements[i].x}px`;
-        //     elTemp.style.top = `${mouseMovements[i].y}px`;
-        //     if (i == mouseMovements.length - 1) clearInterval(interval);
-        //     i++;
-        // }, 50);
     }
 
     listen() {
@@ -59,23 +45,58 @@ class LUE {
         });
     }
 
-    connect() {
-        const socket = new WebSocket("ws://localhost:8000/ws/test/");
+    connect(socketURL: string) {
+        const socket = new WebSocket(socketURL);
 
-        socket.addEventListener("open", (e) => {
-            console.log("Connection successfull");
-        })
+        socket.addEventListener("open", () => {
+            this.isConnected = true;
+        });
 
         socket.addEventListener("message", (e) => {
-            console.log("Message recieved: ", e.data);
-        })
+            if(e.data.session_id) {
+                this.sessionId = e.data.session_id;
+            }
+        });
+
+        socket.addEventListener("close", () => {
+            this.isConnected = false;
+        });
 
         this.connection = socket;
+    }
+
+    autoSave(interval?: number) {
+        if(interval) this.autoSaveInterval = interval;
+        if (!this.connection) {
+            console.error("LUE: Connection is not set. Use connect() to configure a websocket connection");
+            return;
+        }
+
+        this.intervalId = setInterval(() => {
+            this.connection?.send(JSON.stringify(this.getTracks()));
+        }, this.autoSaveInterval);
+    }
+
+    stopAutoSave() {
+        if (!this.intervalId) {
+            console.warn("Auto save is not enabled. So stopping auto save does not affect anything.");
+            return;
+        }
+        clearInterval(this.intervalId);
+        this.intervalId = undefined;
+    }
+
+    save(customFn?: Function) {
+        if (customFn) {
+            customFn();
+        } else if(this.connection) {
+            this.connection.send(JSON.stringify(this.getTracks()));
+        } else {
+            console.error("LUE: Connection is not set. Use connect() to configure a websocket connection");
+        }
     }
 
     getTracks(){
         return this.tracks;
     }
 }
-
-export default LUE;

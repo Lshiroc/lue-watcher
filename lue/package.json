@@ -1,6 +1,6 @@
 {
   "name": "lue-watcher",
-  "version": "0.0.1",
+  "version": "0.0.3",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
@@ -11,7 +11,7 @@
   "scripts": {
     "build": "tsup"
   },
-  "keywords": [],
+  "keywords": ["analytics"],
   "author": "",
   "license": "MIT",
   "description": "npm package for lue-watcher",
