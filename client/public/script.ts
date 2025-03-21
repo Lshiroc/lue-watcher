@@ -1,4 +1,4 @@
-import { LUE } from 'lue-watcher';
+import LUE from 'lue-watcher';
 
 const lue = new LUE();
 

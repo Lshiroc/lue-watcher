@@ -18,7 +18,6 @@ class MyConsumer(WebsocketConsumer):
         
         print(f"Connected with session id: {session_id}")
         self.send(text_data=json.dumps({
-            'message': 'TestMessage',
             'session_id': session_id,
         }))
 

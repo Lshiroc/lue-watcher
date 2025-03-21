@@ -1,3 +1,5 @@
+import LUE from "./lue";
+
 export * from "./types";
-export * from "./lue";
 export * from "./track";
+export default LUE;
