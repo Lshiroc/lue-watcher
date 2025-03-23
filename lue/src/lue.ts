@@ -1,5 +1,5 @@
 import { UserTrack } from "./types";
-import Track from "./track";
+import { Track } from "./track";
 
 export default class LUE {
     width: number;
