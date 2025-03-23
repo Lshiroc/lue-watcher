@@ -1,0 +1,8 @@
+{
+    "compilerOptions": {
+        "target": "ES2024",
+        "module": "ESNext",
+        "outDir": "./../../public",
+        "moduleResolution": "bundler"
+    }
+}

@@ -1,6 +1,6 @@
 import { UserTrack } from "./types";
 
-class Track {
+export class Track {
     session_id?: string;
     x: number = 0;
     y: number = 0;
@@ -21,5 +21,3 @@ class Track {
         this.timestamp= track.timestamp;
     }
 }
-
-export default Track;
